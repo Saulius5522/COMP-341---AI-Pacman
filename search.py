@@ -91,7 +91,7 @@ def depthFirstSearch(problem: SearchProblem):
     start = problem.getStartState()
     nodeStack.push((start, []))
 
-    visited = []
+    visited = set()
 
     while not nodeStack.isEmpty():
         currentState, actions = nodeStack.pop()
@@ -99,7 +99,7 @@ def depthFirstSearch(problem: SearchProblem):
             return actions
     
         if currentState not in visited:
-            visited.append(currentState)
+            visited.add(currentState)
             successors = problem.getSuccessors(currentState)
             for successor, action, stepCost in successors:
                 if successor not in visited:
@@ -114,7 +114,7 @@ def breadthFirstSearch(problem: SearchProblem):
     start = problem.getStartState()
     nodeQueue.push((start, []))
 
-    visited = []
+    visited = set()
 
     while not nodeQueue.isEmpty():
         currentState, actions = nodeQueue.pop()
@@ -122,7 +122,7 @@ def breadthFirstSearch(problem: SearchProblem):
             return actions
     
         if currentState not in visited:
-            visited.append(currentState)
+            visited.add(currentState)
             successors = problem.getSuccessors(currentState)
             for successor, action, stepCost in successors:
                 if successor not in visited:
@@ -136,7 +136,7 @@ def uniformCostSearch(problem: SearchProblem):
     nodeQueue = util.PriorityQueue()
     start = problem.getStartState()
     nodeQueue.push((start, [], 0), 0)
-    visited = []
+    visited = set()
 
     while not nodeQueue.isEmpty():
         currentState, actions, currentCost = nodeQueue.pop()
@@ -146,7 +146,7 @@ def uniformCostSearch(problem: SearchProblem):
             return actions
     
         if currentState not in visited:
-            visited.append(currentState)
+            visited.add(currentState)
             successors = problem.getSuccessors(currentState)
 
             for successor, action, stepCost in successors:
@@ -165,7 +165,28 @@ def nullHeuristic(state, problem=None):
 def aStarSearch(problem: SearchProblem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    nodeQueue = util.PriorityQueue()
+    start = problem.getStartState()
+    nodeQueue.push((start, [], 0), 0)
+    visited = set() #Set time complexity is lower then a list
+
+    while not nodeQueue.isEmpty():
+        currentState, actions, currentCost = nodeQueue.pop()
+        #currentCost = problem.getCostOfActions(actions)
+
+        if problem.isGoalState(currentState):
+            return actions
+    
+        if currentState not in visited:
+            visited.add(currentState)
+            successors = problem.getSuccessors(currentState)
+
+            for successor, action, stepCost in successors:
+                    newPathCost = currentCost + stepCost
+                    successorCost = newPathCost + heuristic(successor, problem)
+                    newActions = actions + [action]
+                    nodeQueue.push((successor, newActions, newPathCost), successorCost) 
+    return []
 
 
 # Abbreviations

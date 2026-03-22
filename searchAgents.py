@@ -296,14 +296,18 @@ class CornersProblem(search.SearchProblem):
         space)
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        return (self.startingPosition, (False, False, False, False))
 
     def isGoalState(self, state: Any):
         """
         Returns whether this search state is a goal state of the problem.
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        visitedCorners = state[1]
+        for reachedCorner in visitedCorners: #Checks if all corners were reached
+            if reachedCorner is False:
+                return False
+        return True
 
     def getSuccessors(self, state: Any):
         """
@@ -316,16 +320,35 @@ class CornersProblem(search.SearchProblem):
             is the incremental cost of expanding to that successor
         """
 
-        successors = []
-        for action in [Directions.NORTH, Directions.SOUTH, Directions.EAST, Directions.WEST]:
             # Add a successor state to the successor list if the action is legal
             # Here's a code snippet for figuring out whether a new position hits a wall:
             #   x,y = currentPosition
             #   dx, dy = Actions.directionToVector(action)
             #   nextx, nexty = int(x + dx), int(y + dy)
             #   hitsWall = self.walls[nextx][nexty]
+            
+            #"*** YOUR CODE HERE"
+        
+        successors = []
+        currentPosition, visitedCorners = state
+        x, y = currentPosition
+        for action in [Directions.NORTH, Directions.SOUTH, Directions.EAST, Directions.WEST]:
 
-            "*** YOUR CODE HERE ***"
+            dx, dy = Actions.directionToVector(action)
+            nextx, nexty = int(x + dx), int(y + dy)
+
+            if not self.walls[nextx][nexty]:
+                nextPosition = (nextx, nexty)
+                tempCornerVisitedList = list(visitedCorners)
+
+                if nextPosition in self.corners:
+                    index = self.corners.index(nextPosition)
+                    tempCornerVisitedList[index] = True
+                
+                tupleCorners = tuple(tempCornerVisitedList)
+
+                nextState = (nextPosition, tupleCorners)
+                successors.append( ( nextState, action, 1) )
 
         self._expanded += 1 # DO NOT CHANGE
         return successors
